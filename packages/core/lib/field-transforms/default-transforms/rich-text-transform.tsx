@@ -22,7 +22,7 @@ import { RichtextField, UiState } from "../../../types";
 import { setDeep } from "../../data/set-deep";
 import { registerOverlayPortal } from "../../overlay-portal";
 
-import { getSelectorForId } from "../../get-selector-for-id";
+import { focusAndScrollToField } from "../../focus-field";
 
 const Editor = lazy(() =>
   import("../../../components/RichTextEditor/components/Editor").then((m) => ({
@@ -59,15 +59,7 @@ const InlineEditorWrapper = memo(
     };
 
     const onClickCaptureHandler = (e: MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      const itemSelector = getSelectorForId(
-        appStoreApi.getState().state,
-        componentId
-      );
-
-      appStoreApi.getState().setUi({ itemSelector });
+      focusAndScrollToField(appStoreApi, componentId, propPath, field.type, e);
     };
 
     // Register portal once

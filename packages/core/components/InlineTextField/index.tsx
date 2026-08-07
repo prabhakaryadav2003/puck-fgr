@@ -7,10 +7,10 @@ import { useAppStoreApi } from "../../store";
 
 import getClassNameFactory from "../../lib/get-class-name-factory";
 import { resolveAndReplaceData } from "../../lib/data/resolve-and-replace-data";
-import { getSelectorForId } from "../../lib/get-selector-for-id";
 import { setDeep } from "../../lib/data/set-deep";
 
 import styles from "./styles.module.css";
+import { focusAndScrollToField } from "../../lib/focus-field";
 
 const getClassName = getClassNameFactory("InlineTextField", styles);
 
@@ -28,6 +28,7 @@ const InlineTextFieldInternal = ({
   opts?: { disableLineBreaks?: boolean };
 }) => {
   const ref = useRef<HTMLHeadingElement>(null);
+  const fieldTypeRef = useRef<string>("text");
   const appStoreApi = useAppStoreApi();
   const disableLineBreaks = opts.disableLineBreaks ?? false;
 
@@ -40,6 +41,11 @@ const InlineTextFieldInternal = ({
       throw new Error(
         `InlineTextField Error: No config defined for ${data.type}`
       );
+    }
+
+    const field = componentConfig.fields?.[propPath];
+    if (field?.type) {
+      fieldTypeRef.current = field.type;
     }
 
     if (ref.current) {
@@ -99,15 +105,13 @@ const InlineTextFieldInternal = ({
         e.stopPropagation();
       }}
       onClickCapture={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        const itemSelector = getSelectorForId(
-          appStoreApi.getState().state,
-          componentId
+        focusAndScrollToField(
+          appStoreApi,
+          componentId,
+          propPath,
+          fieldTypeRef.current,
+          e
         );
-
-        appStoreApi.getState().setUi({ itemSelector });
       }}
       onKeyDown={(e) => {
         e.stopPropagation();

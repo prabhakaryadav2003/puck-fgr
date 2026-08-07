@@ -32,6 +32,7 @@ import type {
 import { FieldLabelInternal } from "./FieldLabel";
 import { useFieldStoreApi, fieldContextStore } from "./store";
 import { useLocalValue } from "./lib/use-local-value";
+import { registerElement } from "../../lib/auto-scroll";
 
 const getClassName = getClassNameFactory("Input", styles);
 const getClassNameWrapper = getClassNameFactory("InputWrapper", styles);
@@ -225,6 +226,7 @@ function AutoFieldInternal<
       }}
     >
       <div
+        ref={(el) => registerElement(resolvedId, el)}
         className={getClassNameWrapper()}
         onFocus={onFocus}
         onBlur={onBlur}

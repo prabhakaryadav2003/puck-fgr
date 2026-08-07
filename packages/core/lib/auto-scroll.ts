@@ -86,10 +86,20 @@ export const scrollElementIntoView = (
   // Find the actual input field inside the wrapper.
   // We use type assertion to tell TypeScript it's an HTMLElement,
   // and fallback to the wrapper `el` if for some reason an input isn't found.
-  const targetEl =
-    (el.querySelector(
-      "input, textarea, select, [contenteditable='true']"
-    ) as HTMLElement) || el;
+
+  // Give strict preference to the Rich Text editor first
+  let targetEl = el.querySelector(
+    '[contenteditable="true"]'
+  ) as HTMLElement | null;
+
+  // If not a rich text field, fall back to standard form inputs
+  if (!targetEl) {
+    targetEl = el.querySelector(
+      "input, textarea, select"
+    ) as HTMLElement | null;
+  }
+
+  targetEl = targetEl || el;
 
   // Animate the target element
   targetEl.animate(animationSettings.keyframes, animationSettings.options);

@@ -30,9 +30,7 @@ export const focusAndScrollToField = (
   let fieldId = "";
 
   if (arrayMatch) {
-    const arrayFieldName = arrayMatch[1]; // e.g., "items"
-    const itemIndex = arrayMatch[2]; // e.g., "0"
-    const subName = arrayMatch[3]; // e.g., "title"
+    const [, arrayFieldName, itemIndex, subName] = arrayMatch;
 
     const data = state.indexes.nodes[componentId]?.data;
     const componentConfig = appStore.getComponentConfig(data?.type);
@@ -42,8 +40,8 @@ export const focusAndScrollToField = (
     const arrayId = `${componentId}_${arrayFieldType}_${arrayFieldName}`;
     const itemArrayId = `${arrayId}-${itemIndex}`;
 
-    // Expand the array item in the sidebar
-    const currentArrayState = state.ui.arrayState[arrayId] || { items: [] };
+    // Safely fallback arrayState using optional chaining
+    const currentArrayState = state.ui.arrayState?.[arrayId] || { items: [] };
 
     newUiState.arrayState = {
       ...state.ui.arrayState,
@@ -60,9 +58,10 @@ export const focusAndScrollToField = (
     fieldId = `${componentId}_${fieldType}_${propPath}`;
   }
 
-  // Apply all UI updates at once
+  // Commit UI updates at once.
+  // This tells the store to update, which tells React to render the new sidebar fields.
   appStore.setUi(newUiState);
 
-  // Trigger the scroll
+  // If the element doesn't exist in the DOM yet, auto-scroll.ts will catch it in pending.
   scrollElementIntoView(fieldId);
 };

@@ -220,7 +220,7 @@ export const ArrayField = ({
           _arrayId: `${id}-${idx}`,
         };
       }),
-      openId: "",
+      openId: thisState?.openId || "",
     };
   }, [appStoreApi, id, getValue, name]);
 
